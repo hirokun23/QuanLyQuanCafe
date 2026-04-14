@@ -1,5 +1,4 @@
-﻿using QuanLyQuanCafe.BUS;
-using QuanLyQuanCafe.DTO;
+﻿
 using System;
 using System.Windows.Forms;
 
@@ -7,8 +6,7 @@ namespace QuanLyQuanCafe
 {
     public partial class NhanVienForm : Form
     {
-        NhanVienBUS bus = new NhanVienBUS();
-        int idSelected = -1;
+        int rowIndex = -1;
 
         public NhanVienForm()
         {
@@ -17,102 +15,79 @@ namespace QuanLyQuanCafe
 
         private void NhanVienForm_Load(object sender, EventArgs e)
         {
-            LoadData();
+            // Tạo cột cho bảng
+            dgvNhanVien.ColumnCount = 6;
+            dgvNhanVien.Columns[0].Name = "Tên NV";
+            dgvNhanVien.Columns[1].Name = "Ngày sinh";
+            dgvNhanVien.Columns[2].Name = "SĐT";
+            dgvNhanVien.Columns[3].Name = "Địa chỉ";
+            dgvNhanVien.Columns[4].Name = "Chức vụ";
+            dgvNhanVien.Columns[5].Name = "Lương";
+
+            cbGioiTinh.Items.Add("Nam");
+            cbGioiTinh.Items.Add("Nữ");
         }
-
-        // ================= LOAD DATA =================
-        void LoadData()
-        {
-            dgvNhanVien.Rows.Clear();
-
-            foreach (var nv in bus.GetAll())
-            {
-                dgvNhanVien.Rows.Add(
-                    nv.MaNV,
-                    nv.TenNV,
-                    nv.SDT,
-                    nv.DiaChi,
-                    nv.GioiTinh,
-                    nv.NgaySinh.ToString("dd/MM/yyyy"),
-                    nv.VaiTro,
-                    nv.Luong,
-                    nv.TaiKhoan,
-                    nv.MatKhau
-                );
-            }
-        }
-
-        // ================= THÊM =================
         private void btnThem_Click(object sender, EventArgs e)
         {
-            bus.Insert(new NhanVien
-            {
-                TenNV = lblTenNV.Text,
-                SDT = lblSDT.Text,
-                DiaChi = lblDiaChi.Text,
-                GioiTinh = lblGioiTinh.Text,
-                NgaySinh = dtpNgaySinh.Value,
-                VaiTro = txtVaiTro.Text,
-                Luong = decimal.Parse(txtLuong.Text),
-                TaiKhoan = txtMatKhau.Text,
-                MatKhau = txtMatKhau.Text
-            });
+            dgvNhanVien.Rows.Add(
+                 txtTenNV.Text,
+                 dtNgaySinh.Value.ToShortDateString(),
+                 txtSDT.Text,
+                 txtDiaChi.Text,
+                 txtChucVu.Text,
+                 txtLuong.Text
+             );
 
-            LoadData();
+            ClearForm();
         }
 
-        // ================= SEARCH (QUAY VỀ BUS HOẶC DAL SAU) =================
         private void btnTimKiem_Click(object sender, EventArgs e)
         {
-            string key = txtSearch.Text.Trim();
 
-            dgvNhanVien.Rows.Clear();
+        }
 
-            foreach (var nv in bus.GetAll())
+        private void dgvNhanVien_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            rowIndex = e.RowIndex;
+            if (rowIndex >= 0)
             {
-                if (nv.TenNV.Contains(key))
-                {
-                    dgvNhanVien.Rows.Add(
-                        nv.MaNV,
-                        nv.TenNV,
-                        nv.SDT,
-                        nv.DiaChi,
-                        nv.GioiTinh,
-                        nv.NgaySinh.ToString("dd/MM/yyyy"),
-                        nv.VaiTro,
-                        nv.Luong,
-                        nv.TaiKhoan,
-                        nv.MatKhau
-                    );
-                }
+                DataGridViewRow row = dgvNhanVien.Rows[rowIndex];
+
+                txtTenNV.Text = row.Cells[0].Value.ToString();
+                dtNgaySinh.Value = DateTime.Parse(row.Cells[1].Value.ToString());
+                txtSDT.Text = row.Cells[2].Value.ToString();
+                txtDiaChi.Text = row.Cells[3].Value.ToString();
+                txtChucVu.Text = row.Cells[4].Value.ToString();
+                txtLuong.Text = row.Cells[5].Value.ToString();
             }
         }
 
-        // ================= CLICK ROW =================
-        private void dgvNhanVien_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-
-            idSelected = Convert.ToInt32(dgvNhanVien.Rows[e.RowIndex].Cells[0].Value);
-
-            lblTenNV.Text = dgvNhanVien.Rows[e.RowIndex].Cells[1].Value.ToString();
-            lblSDT.Text = dgvNhanVien.Rows[e.RowIndex].Cells[2].Value.ToString();
-            lblDiaChi.Text = dgvNhanVien.Rows[e.RowIndex].Cells[3].Value.ToString();
-            lblGioiTinh.Text = dgvNhanVien.Rows[e.RowIndex].Cells[4].Value.ToString();
-            dtpNgaySinh.Value = Convert.ToDateTime(dgvNhanVien.Rows[e.RowIndex].Cells[5].Value);
-            txtVaiTro.Text = dgvNhanVien.Rows[e.RowIndex].Cells[6].Value.ToString();
-            txtLuong.Text = dgvNhanVien.Rows[e.RowIndex].Cells[7].Value.ToString();
-            txtMatKhau.Text = dgvNhanVien.Rows[e.RowIndex].Cells[8].Value.ToString();
-            txtMatKhau.Text = dgvNhanVien.Rows[e.RowIndex].Cells[9].Value.ToString();
-        }
-
-        // ================= XÓA =================
         private void btnXoa_Click(object sender, EventArgs e)
         {
-            if (idSelected == -1) return;
+            if (rowIndex >= 0)
+            {
+                dgvNhanVien.Rows.RemoveAt(rowIndex);
+                ClearForm();
+            }
+        }
 
-            bus.Delete(idSelected);
-            LoadData();
+        private void btnSua_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Đã lưu dữ liệu (demo, chưa có SQL)");
+        }
+        void ClearForm()
+        {
+            txtTenNV.Clear();
+            txtSDT.Clear();
+            txtDiaChi.Clear();
+            txtChucVu.Clear();
+            txtLuong.Clear();
+            cbGioiTinh.SelectedIndex = -1;
         }
     }
 }
