@@ -1,14 +1,25 @@
-CREATE DATABASE QuanLyQuanCafe;
+CREATE DATABASE QLCF
+GO
+
+USE QLCF
+GO
 
 CREATE TABLE NhanVien (
-    MaNV INT IDENTITY PRIMARY KEY,
+    MaNV INT IDENTITY(1,1) PRIMARY KEY,
     TenNV NVARCHAR(100),
+    NgaySinh DATE,
     SDT NVARCHAR(20),
     DiaChi NVARCHAR(200),
-    GioiTinh NVARCHAR(10),
-    NgaySinh DATE,
-    VaiTro NVARCHAR(50),
-    Luong DECIMAL(18,2),
-    TaiKhoan NVARCHAR(50),
+    ChucVu NVARCHAR(50),
+    Luong FLOAT
+)
+
+CREATE TABLE TaiKhoan
+(
+    TenDangNhap NVARCHAR(50),
     MatKhau NVARCHAR(50)
 );
+
+INSERT INTO TaiKhoan VALUES
+('admin', '123'),
+('user', '123');

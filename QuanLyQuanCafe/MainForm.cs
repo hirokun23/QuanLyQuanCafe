@@ -17,10 +17,6 @@ namespace QuanLyQuanCafe
             InitializeComponent();
         }
 
-        private void HomeForm_Load(object sender, EventArgs e)
-        {
-
-        }
         void LoadForm(Form f)
         {
             panelMain.Controls.Clear();
@@ -35,18 +31,17 @@ namespace QuanLyQuanCafe
             LoadForm(new HomeForm());
             lblTitle.Text = "Home";
         }
-
         private void MainForm_Load(object sender, EventArgs e)
         {
             LoadForm(new HomeForm());
         }
-
 
         private void btnBanHang_Click(object sender, EventArgs e)
         {
             LoadForm(new OrderForm());
             lblTitle.Text = "Bán hàng";
         }
+
 
         private void btnNhanVien_Click(object sender, EventArgs e)
         {

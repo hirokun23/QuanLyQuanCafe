@@ -219,7 +219,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.picturelogo);
             this.Name = "MainForm";
-            this.Text = "HomeForm";
+            this.Text = "MainForm";
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.picturelogo)).EndInit();
             this.panel1.ResumeLayout(false);

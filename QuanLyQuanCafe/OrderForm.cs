@@ -9,10 +9,12 @@ namespace QuanLyQuanCafe
         public OrderForm()
         {
             InitializeComponent();
+            this.Load += OrderForm_Load;
         }
 
         private void OrderForm_Load(object sender, EventArgs e)
         {
+            
             LoadTable();
         }
 
@@ -31,16 +33,10 @@ namespace QuanLyQuanCafe
                 btn.Height = 80;
                 btn.Margin = new Padding(5);
 
-                btn.Text = "Bàn " + i;
-                btn.Tag = i;
+                btn.Text = "Bàn " + i + "\nTrống";
+                btn.Tag = "empty"; // lưu trạng thái
 
-                // giả lập trạng thái
-                bool coNguoi = (i % 4 == 0);
-
-                if (coNguoi)
-                    btn.BackColor = Color.Orange;
-                else
-                    btn.BackColor = Color.LightBlue;
+                btn.BackColor = Color.LightBlue;
 
                 btn.Click += Btn_Click;
 
@@ -52,7 +48,27 @@ namespace QuanLyQuanCafe
         void Btn_Click(object sender, EventArgs e)
         {
             Button btn = sender as Button;
-            int maBan = (int)btn.Tag;
+
+            int maBan = flowLayoutPanelTable.Controls.IndexOf(btn) + 1;
+
+            // đổi trạng thái bàn
+            if (btn.Tag.ToString() == "empty")
+            {
+                btn.Tag = "full";
+                btn.BackColor = Color.Orange;
+                btn.Text = "Bàn " + maBan + "\nCó khách";
+            }
+            else
+            {
+                btn.Tag = "empty";
+                btn.BackColor = Color.LightBlue;
+                btn.Text = "Bàn " + maBan + "\nTrống";
+
+                dgvBill.Rows.Clear();
+                txtTotal.Text = "0";
+                lblTitle.Text = "Chưa chọn bàn";
+                return;
+            }
 
             lblTitle.Text = "Chi tiết hóa đơn - Bàn " + maBan;
 
@@ -104,7 +120,20 @@ namespace QuanLyQuanCafe
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (dgvBill.SelectedRows.Count > 0)
+            if (dgvBill.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn món để xóa!", "Thông báo");
+                return;
+            }
+
+            DialogResult rs = MessageBox.Show(
+                "Bạn có chắc muốn xóa món này?",
+                "Xác nhận",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            );
+
+            if (rs == DialogResult.Yes)
             {
                 dgvBill.Rows.RemoveAt(dgvBill.SelectedRows[0].Index);
                 TinhTien();
@@ -113,7 +142,27 @@ namespace QuanLyQuanCafe
 
         private void btnPay_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Thanh toán thành công!");
+            if (dgvBill.Rows.Count == 0)
+            {
+                MessageBox.Show("Chưa có món để thanh toán!", "Thông báo");
+                return;
+            }
+
+            DialogResult rs = MessageBox.Show(
+                "Bạn có chắc muốn thanh toán không?",
+                "Xác nhận",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (rs == DialogResult.Yes)
+            {
+                MessageBox.Show("Thanh toán thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                dgvBill.Rows.Clear();
+                txtTotal.Text = "0";
+                lblTitle.Text = "Chưa chọn bàn";
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -121,5 +170,7 @@ namespace QuanLyQuanCafe
             dgvBill.Rows.Clear();
             txtTotal.Text = "0";
         }
+
+        
     }
 }
