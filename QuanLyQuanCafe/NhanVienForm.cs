@@ -1,93 +1,148 @@
-﻿using System;
+﻿using QuanLyQuanCafe.BUS;
+using QuanLyQuanCafe.Data;
+using QuanLyQuanCafe.DTO;
+using System;
 using System.Data;
-using System.Data.SqlClient;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace QuanLyQuanCafe
 {
     public partial class NhanVienForm : Form
     {
-        // Chuỗi kết nối của bạn
-        string connStr = @"Data Source=DESKTOP-DJ9DDFC\SQLEXPRESS;Initial Catalog=QLCF;Integrated Security=True";
+        string connStr = @"Data Source=.\SQLEXPRESS;Initial Catalog=QLCF;Integrated Security=True";
 
-        // BƯỚC QUAN TRỌNG: Đưa DataAdapter và DataTable ra ngoài khai báo toàn cục 
-        // để nút Save và hàm Tìm Kiếm có thể dùng chung
-        SqlDataAdapter da;
-        DataTable dt;
+        NhanVienBUS nvBus;
+        NhanVienDTO nvInfo;
 
         public NhanVienForm()
         {
             InitializeComponent();
         }
 
-        // 1. HÀM TẢI DỮ LIỆU TỪ SQL LÊN DATAGRIDVIEW
-        private void LoadData()
-        {
-            SqlConnection conn = new SqlConnection(connStr);
-
-            // Dùng DataAdapter (chiếc xe tải) để chở dữ liệu từ DB đổ vào DataTable (nhà bếp)
-            da = new SqlDataAdapter("SELECT * FROM NhanVien", conn);
-
-            // TRỢ LÝ TỰ ĐỘNG TẠO LỆNH THÊM/XÓA/SỬA CHO NÚT SAVE
-            SqlCommandBuilder builder = new SqlCommandBuilder(da);
-
-            dt = new DataTable();
-            da.Fill(dt);
-
-            // Xóa các cột (Column1, Column2...) bạn lỡ tạo tay trong Designer 
-            // để tránh bị nhân đôi cột khi DataTable tự động map dữ liệu lên
-            dgvNhanVien.Columns.Clear();
-
-            // Gán dữ liệu cho DataGridView tự động hiển thị
-            dgvNhanVien.DataSource = dt;
-        }
-
-        // 2. KHI MỞ FORM LÊN -> GỌI HÀM TẢI DỮ LIỆU
+        // LOAD FORM
         private void NhanVienForm_Load(object sender, EventArgs e)
         {
-            LoadData();
+            DataProvider.connectionString = connStr;
+
+            DataProvider provider = new DataProvider();
+            provider.connect();
+
+            nvBus = new NhanVienBUS();
+            nvInfo = new NhanVienDTO();
+
+            LoadGrid();
         }
 
-        // 3. THÊM NHÂN VIÊN
-        private void btnThem_Click(object sender, EventArgs e)
+        // LOAD DATA GRID
+        private void LoadGrid()
         {
-            if (!int.TryParse(txtLuong.Text.Trim(), out int luong))
+            dgvNhanVien.AutoGenerateColumns = true;
+
+            dgvNhanVien.DataSource = null;
+            dgvNhanVien.DataSource = nvBus.getDSNhanVien();
+
+            dgvNhanVien.DefaultCellStyle.ForeColor = Color.Black;
+            dgvNhanVien.DefaultCellStyle.BackColor = Color.White;
+
+            dgvNhanVien.RowTemplate.Height = 25;
+
+            foreach (DataGridViewColumn col in dgvNhanVien.Columns)
+            {
+                col.Visible = true;
+            }
+
+            if (dgvNhanVien.Columns["MaNV"] != null)
+                dgvNhanVien.Columns["MaNV"].Visible = false;
+        }
+
+        // LẤY DATA TỪ FORM
+        private bool getData()
+        {
+            nvInfo.TenNV = txtTenNV.Text;
+            nvInfo.NgaySinh = dtNgaySinh.Value;
+            nvInfo.SDT = txtSDT.Text;
+            nvInfo.GioiTinh = cbGioiTinh.Text;
+            nvInfo.DiaChi = txtDiaChi.Text;
+            nvInfo.ChucVu = txtChucVu.Text;
+
+            if (!float.TryParse(txtLuong.Text, out float luong))
             {
                 MessageBox.Show("Lương phải là số!");
+                return false;
+            }
+
+            nvInfo.Luong = luong;
+
+            if (dgvNhanVien.CurrentRow != null)
+            {
+                nvInfo.MaNV = Convert.ToInt32(dgvNhanVien.CurrentRow.Cells["MaNV"].Value);
+            }
+
+            nvBus.info = nvInfo;
+            return true;
+        }
+
+        // THÊM
+        private void btnThem_Click(object sender, EventArgs e)
+        {
+            if (!getData()) return;
+
+            if (nvBus.insert())
+            {
+                MessageBox.Show("Thêm thành công!");
+                LoadGrid();
+                ClearForm();
+            }
+        }
+
+        // SỬA
+        private void btnSua_Click(object sender, EventArgs e)
+        {
+            if (!getData()) return;
+
+            if (nvBus.update())
+            {
+                MessageBox.Show("Sửa thành công!");
+                LoadGrid();
+                ClearForm();
+            }
+        }
+
+        // XÓA
+        private void btnXoa_Click(object sender, EventArgs e)
+        {
+            if (dgvNhanVien.CurrentRow == null)
+            {
+                MessageBox.Show("Chọn nhân viên để xóa!");
                 return;
             }
 
-            using (SqlConnection conn = new SqlConnection(connStr))
+            if (MessageBox.Show("Xóa?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                conn.Open();
-                string query = @"INSERT INTO NhanVien (TenNV, NgaySinh, SDT, GioiTinh, DiaChi, ChucVu, Luong) 
-                                 VALUES (@ten, @ngay, @sdt, @gt, @dc, @cv, @luong)";
+                if (!getData()) return;
 
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@ten", txtTenNV.Text);
-                cmd.Parameters.AddWithValue("@ngay", dtNgaySinh.Value);
-                cmd.Parameters.AddWithValue("@sdt", txtSDT.Text);
-                cmd.Parameters.AddWithValue("@gt", cbGioiTinh.Text);
-                cmd.Parameters.AddWithValue("@dc", txtDiaChi.Text);
-                cmd.Parameters.AddWithValue("@cv", txtChucVu.Text);
-                cmd.Parameters.AddWithValue("@luong", luong);
-
-                cmd.ExecuteNonQuery();
+                if (nvBus.delete())
+                {
+                    MessageBox.Show("Xóa thành công!");
+                    LoadGrid();
+                    ClearForm();
+                }
             }
-
-            MessageBox.Show("Đã thêm thành công!");
-            ClearForm();
-            LoadData(); // Thêm xong gọi hàm Load lại để DataGridView tự cập nhật
         }
 
-        // 4. CLICK VÀO LƯỚI ĐỂ ĐỔ DỮ LIỆU LÊN TEXTBOX
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        // CLICK GRID
         private void dgvNhanVien_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)
             {
                 DataGridViewRow row = dgvNhanVien.Rows[e.RowIndex];
 
-                // Dùng Tên Cột từ SQL để map chính xác dữ liệu vào textbox
                 txtTenNV.Text = row.Cells["TenNV"].Value.ToString();
                 dtNgaySinh.Value = Convert.ToDateTime(row.Cells["NgaySinh"].Value);
                 txtSDT.Text = row.Cells["SDT"].Value.ToString();
@@ -98,111 +153,20 @@ namespace QuanLyQuanCafe
             }
         }
 
-        // 5. SỬA NHÂN VIÊN
-        private void btnSua_Click(object sender, EventArgs e)
-        {
-            if (!int.TryParse(txtLuong.Text.Trim(), out int luong)) return;
-
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                conn.Open();
-                string query = @"UPDATE NhanVien SET NgaySinh=@ngay, SDT=@sdt, GioiTinh=@gt, 
-                                 DiaChi=@dc, ChucVu=@cv, Luong=@luong WHERE TenNV=@ten";
-
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@ten", txtTenNV.Text); // Khóa tìm kiếm
-                cmd.Parameters.AddWithValue("@ngay", dtNgaySinh.Value);
-                cmd.Parameters.AddWithValue("@sdt", txtSDT.Text);
-                cmd.Parameters.AddWithValue("@gt", cbGioiTinh.Text);
-                cmd.Parameters.AddWithValue("@dc", txtDiaChi.Text);
-                cmd.Parameters.AddWithValue("@cv", txtChucVu.Text);
-                cmd.Parameters.AddWithValue("@luong", luong);
-
-                cmd.ExecuteNonQuery();
-            }
-
-            MessageBox.Show("Đã cập nhật thành công!");
-            ClearForm();
-            LoadData(); // Cập nhật lại lưới
-        }
-
-        // 6. XÓA NHÂN VIÊN
-        private void btnXoa_Click(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(txtTenNV.Text))
-            {
-                MessageBox.Show("Vui lòng chọn nhân viên cần xóa!");
-                return;
-            }
-
-            // Hiển thị hộp thoại xác nhận trước khi xóa cho chuyên nghiệp
-            DialogResult dtResult = MessageBox.Show("Bạn có chắc muốn xóa nhân viên này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (dtResult == DialogResult.Yes)
-            {
-                using (SqlConnection conn = new SqlConnection(connStr))
-                {
-                    conn.Open();
-                    string query = "DELETE FROM NhanVien WHERE TenNV=@ten";
-                    SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue("@ten", txtTenNV.Text);
-
-                    cmd.ExecuteNonQuery();
-                }
-
-                MessageBox.Show("Đã xóa thành công!");
-                ClearForm();
-                LoadData();
-            }
-        }
-
-        // 7. TÌM KIẾM NHÂN VIÊN
+        // TÌM KIẾM (simple)
         private void button1_Click(object sender, EventArgs e)
         {
-            string keyword = txtSearch.Text.Trim();
+            string keyword = txtSearch.Text.Trim().ToLower();
 
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                string query = "SELECT * FROM NhanVien WHERE TenNV LIKE @tuKhoa";
-                SqlCommand cmd = new SqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@tuKhoa", "%" + keyword + "%");
+            DataTable dt = nvBus.getDSNhanVien();
 
-                da = new SqlDataAdapter(cmd);
-                dt = new DataTable();
-                da.Fill(dt);
+            DataView dv = dt.DefaultView;
+            dv.RowFilter = $"TenNV LIKE '%{keyword}%'";
 
-                dgvNhanVien.DataSource = dt;
-
-                if (dt.Rows.Count == 0)
-                {
-                    MessageBox.Show("Không tìm thấy nhân viên!");
-                    LoadData(); // Tải lại danh sách nếu không tìm thấy
-                }
-            }
+            dgvNhanVien.DataSource = dv.ToTable();
         }
 
-        // 8. NÚT LƯU ĐỒNG BỘ TOÀN BỘ THAY ĐỔI TRÊN LƯỚI LÊN SQL
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                // Kết thúc việc edit trên lưới (nếu người dùng đang gõ dở dang)
-                dgvNhanVien.EndEdit();
-
-                // Lấy những thay đổi trên DataTable (Thêm/Sửa/Xóa) đẩy về SQL
-                if (da != null && dt != null)
-                {
-                    da.Update(dt);
-                    MessageBox.Show("Đã lưu toàn bộ thay đổi vào CSDL thành công!", "Thông báo");
-                    LoadData(); // Tải lại cho chắc chắn
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi khi lưu dữ liệu: \n" + ex.Message, "Lỗi");
-            }
-        }
-
-        // 9. HÀM XÓA TRẮNG FORM
+        // CLEAR FORM
         private void ClearForm()
         {
             txtTenNV.Clear();

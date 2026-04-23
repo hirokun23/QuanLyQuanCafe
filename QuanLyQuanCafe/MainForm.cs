@@ -49,40 +49,31 @@ namespace QuanLyQuanCafe
             lblTitle.Text = "Nhân viên";
         }
 
-        private void btnDanhMuc_Click(object sender, EventArgs e)
+        private void btnKho_Click(object sender, EventArgs e)
         {
-            LoadForm(new CategoryForm());
-            lblTitle.Text = "Danh mục";
+            LoadForm(new KhoForm());
+            lblTitle.Text = "Kho";
         }
 
-        private void btnSanPham_Click(object sender, EventArgs e)
+        private void btnMenu_Click(object sender, EventArgs e)
         {
-            LoadForm(new ProductForm());
-            lblTitle.Text = "Sản phẩm";
+            LoadForm(new MenuForm());
+            lblTitle.Text = "Menu";
         }
 
         private void btnBan_Click(object sender, EventArgs e)
         {
-            LoadForm(new TableForm());
+            LoadForm(new BanForm());
             lblTitle.Text = "Quản lý bàn";
         }
 
-        private void btnThongKe_Click(object sender, EventArgs e)
+        private void btnDoanhThu_Click(object sender, EventArgs e)
         {
-            LoadForm(new ReportForm());
-            lblTitle.Text = "Thống kê";
+            LoadForm(new DoanhThuForm());
+            lblTitle.Text = "Doanh thu";
         }
 
-        private void btnLuong_Click(object sender, EventArgs e)
-        {
-            LoadForm(new SalaryForm());
-            lblTitle.Text = "Lương";
-        }
 
-        private void btnHoaDon_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void btnThoat_Click(object sender, EventArgs e)
         {
@@ -97,5 +88,10 @@ namespace QuanLyQuanCafe
                 Application.Exit();
             }
         }
+
+        
+        
+
+        
     }
 }
