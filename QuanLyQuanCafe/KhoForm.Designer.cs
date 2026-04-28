@@ -39,13 +39,13 @@ namespace QuanLyQuanCafe
             // FORM
             this.Text = "Quản lý Kho";
             this.Size = new Size(600, 400);
-            this.BackColor = Color.FromArgb(30, 30, 30);
+            this.BackColor = Color.White;
 
             // dgvKho
             dgvKho.Location = new Point(20, 20);
             dgvKho.Size = new Size(540, 200);
-            dgvKho.BackgroundColor = Color.Black;
-            dgvKho.ForeColor = Color.White;
+            dgvKho.BackgroundColor = Color.White;
+            dgvKho.ForeColor = Color.Black;
 
             // txtMaNL
             txtMaNL.Location = new Point(20, 240);
@@ -92,6 +92,7 @@ namespace QuanLyQuanCafe
             this.Controls.Add(btnSua);
             this.Controls.Add(btnXoa);
 
+            this.Load += new System.EventHandler(this.KhoForm_Load);
             this.ResumeLayout(false);
         }
     }
