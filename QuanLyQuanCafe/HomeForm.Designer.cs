@@ -37,6 +37,7 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Name = "HomeForm";
             this.Text = "HomeForm";
+            this.Load += new System.EventHandler(this.HomeForm_Load);
             this.ResumeLayout(false);
 
         }

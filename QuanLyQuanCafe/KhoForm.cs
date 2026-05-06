@@ -46,5 +46,20 @@ namespace QuanLyQuanCafe
             bus.Delete(txtMaNL.Text);
             dgvKho.DataSource = bus.GetAll();
         }
+
+        private void dgvKho_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void KhoForm_Load_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtMaNL_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

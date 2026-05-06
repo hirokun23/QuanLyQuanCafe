@@ -287,6 +287,7 @@
             this.Controls.Add(this.panelRight);
             this.Name = "OrderForm";
             this.Text = "Quản lý quán cà phê";
+            this.Load += new System.EventHandler(this.OrderForm_Load_1);
             this.panelRight.ResumeLayout(false);
             this.panelRight.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvBill)).EndInit();

@@ -118,6 +118,7 @@ namespace QuanLyQuanCafe
             this.Controls.Add(this.lblDen);
             this.Name = "DoanhThuForm";
             this.Text = "Quản lý Doanh Thu";
+            this.Load += new System.EventHandler(this.DoanhThuForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvDoanhThu)).EndInit();
             this.ResumeLayout(false);
 

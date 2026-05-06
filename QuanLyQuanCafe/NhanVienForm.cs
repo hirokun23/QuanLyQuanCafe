@@ -10,7 +10,7 @@ namespace QuanLyQuanCafe
 {
     public partial class NhanVienForm : Form
     {
-        string connStr = @"Data Source=.\SQLEXPRESS;Initial Catalog=QLCF;Integrated Security=True";
+        string connStr = @"Data Source=HUYLE\SQLEXPRESS2012;Initial Catalog=QLCF;Integrated Security=True";
 
         NhanVienBUS nvBus;
         NhanVienDTO nvInfo;

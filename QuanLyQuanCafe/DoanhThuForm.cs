@@ -27,5 +27,10 @@ namespace QuanLyQuanCafe
 
             lblTongTien.Text = "Tổng tiền: " + tong.ToString("N0") + " VND";
         }
+
+        private void DoanhThuForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
