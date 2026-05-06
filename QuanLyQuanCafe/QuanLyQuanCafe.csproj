@@ -53,11 +53,11 @@
     <Compile Include="BUS\MonBUS.cs" />
     <Compile Include="BUS\NguyenLieuBUS.cs" />
     <Compile Include="BUS\NhanVienBUS.cs" />
-    <Compile Include="DAO\BanDAO.cs" />
-    <Compile Include="DAO\HoaDonDAO.cs" />
-    <Compile Include="DAO\MonDAO.cs" />
-    <Compile Include="DAO\NguyenLieuDAO.cs" />
-    <Compile Include="DAO\NhanVienDAO.cs" />
+    <Compile Include="DAL\BanDAO.cs" />
+    <Compile Include="DAL\HoaDonDAO.cs" />
+    <Compile Include="DAL\MonDAO.cs" />
+    <Compile Include="DAL\NguyenLieuDAO.cs" />
+    <Compile Include="DAL\NhanVienDAO.cs" />
     <Compile Include="Data\DataProvider.cs" />
     <Compile Include="DoanhThuForm.cs">
       <SubType>Form</SubType>

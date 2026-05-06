@@ -1,6 +1,7 @@
-﻿using System;
+﻿using QuanLyQuanCafe.BUS;
+using System;
+using System.Drawing;
 using System.Windows.Forms;
-using QuanLyQuanCafe.BUS;
 
 namespace QuanLyQuanCafe
 {
@@ -16,6 +17,8 @@ namespace QuanLyQuanCafe
         private void KhoForm_Load(object sender, EventArgs e)
         {
             dgvKho.DataSource = bus.GetAll();
+            dgvKho.DefaultCellStyle.ForeColor = Color.Black;
+            dgvKho.DefaultCellStyle.BackColor = Color.White;
         }
 
         private void btnThem_Click(object sender, EventArgs e)

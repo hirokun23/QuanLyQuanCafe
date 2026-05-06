@@ -38,6 +38,7 @@ namespace QuanLyQuanCafe
             this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvKho)).BeginInit();
             this.SuspendLayout();
+<<<<<<< HEAD
             // 
             // dgvKho
             // 
@@ -48,6 +49,20 @@ namespace QuanLyQuanCafe
             this.dgvKho.TabIndex = 0;
             this.dgvKho.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvKho_CellContentClick);
             // 
+=======
+
+            // FORM
+            this.Text = "Quản lý Kho";
+            this.Size = new Size(600, 400);
+            this.BackColor = Color.White;
+
+            // dgvKho
+            dgvKho.Location = new Point(20, 20);
+            dgvKho.Size = new Size(540, 200);
+            dgvKho.BackgroundColor = Color.White;
+            dgvKho.ForeColor = Color.Black;
+
+>>>>>>> bd3b046972ab6717e53fe0f5e7c9f1262231a8ed
             // txtMaNL
             // 
             this.txtMaNL.Location = new System.Drawing.Point(20, 240);
@@ -95,6 +110,7 @@ namespace QuanLyQuanCafe
             this.btnSua.Click += new System.EventHandler(this.btnSua_Click);
             // 
             // btnXoa
+<<<<<<< HEAD
             // 
             this.btnXoa.BackColor = System.Drawing.Color.Salmon;
             this.btnXoa.ForeColor = System.Drawing.Color.White;
@@ -155,6 +171,24 @@ namespace QuanLyQuanCafe
             this.Text = "Quản lý Kho";
             this.Load += new System.EventHandler(this.KhoForm_Load_1);
             ((System.ComponentModel.ISupportInitialize)(this.dgvKho)).EndInit();
+=======
+            btnXoa.Text = "Xóa";
+            btnXoa.Location = new Point(220, 280);
+            btnXoa.BackColor = Color.Red;
+            btnXoa.ForeColor = Color.White;
+            btnXoa.Click += new System.EventHandler(this.btnXoa_Click);
+
+            // ADD CONTROL
+            this.Controls.Add(dgvKho);
+            this.Controls.Add(txtMaNL);
+            this.Controls.Add(txtTenNL);
+            this.Controls.Add(txtSoLuong);
+            this.Controls.Add(btnThem);
+            this.Controls.Add(btnSua);
+            this.Controls.Add(btnXoa);
+
+            this.Load += new System.EventHandler(this.KhoForm_Load);
+>>>>>>> bd3b046972ab6717e53fe0f5e7c9f1262231a8ed
             this.ResumeLayout(false);
             this.PerformLayout();
 
